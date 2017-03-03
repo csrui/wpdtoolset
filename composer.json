@@ -1,0 +1,28 @@
+{
+    "name": "26b/wpd-toolset",
+    "type": "library",
+    "autoload": {
+      "psr-4": {
+        "WPD\\": "WPD/"
+      }
+    },
+    "require": {
+        "johnpbloch/wordpress": "4.6",
+    },
+    "require-dev": {
+        "symfony/console": "^3.2",
+        "symfony/yaml": "^3.2"
+    },
+    "authors": [
+        {
+            "name": "Rui Sardinha",
+            "email": "mail@ruisardinha.com"
+        }
+    ],
+    "extra": {
+      "wordpress-install-dir": "wp"
+    },
+    "config": {
+      "sort-packages": true
+    }
+}
