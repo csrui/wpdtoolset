@@ -21,9 +21,16 @@ class GeneratorCommand extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		// Ask for a DB Password.
+		$output->write("<info>Define a DB password:</info> <comment>(Leave empty to use default `bananarama`)</comment>\n");
+		$db_password = readline();
 
-		//TODO Get password from $input
-		$db_password = 'bananarama';
+		if ( empty ( $db_password ) ) {
+			$output->write("<info>Using default password `bananarama` for database<info>\n");
+			$db_password = 'bananarama';
+		} else {
+			$output->write("<info>Using {$db_password} as the database password</info>\n");
+		}
 
 		$docker_file = [
 			'wpdb' => [
@@ -72,17 +79,17 @@ class GeneratorCommand extends Command
 		];
 
 		$yaml = Yaml::dump($docker_file);
-		$output->writeln('Writing docker file');
+		$output->writeln('<info>Writing docker file</info>');
 		file_put_contents('docker-compose.yml', $yaml);
 
 		$gitignore = basename(__DIR__) . PHP_EOL;
-		$output->writeln('Writting .gitignore');
+		$output->writeln('<info>Writting .gitignore</info>');
 		file_put_contents('.gitignore', $gitignore);
 
-		$output->writeln('Writting composer.json');
+		$output->writeln('<info>Writting composer.json</info>');
 		copy( 'toolset/base/composer.json', './composer.json' );
 
-		$output->writeln('Starting engines...');
+		$output->writeln('<info>Starting engines...</info>');
 
 		// To load wordpress as dependency
 		copy( 'toolset/base/index.php', './index.php' );
