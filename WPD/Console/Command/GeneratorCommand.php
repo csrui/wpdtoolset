@@ -99,7 +99,9 @@ class GeneratorCommand extends Command
 		];
 
 		// Write docker-compose file.
-		$yaml = Yaml::dump( $docker_file );
+		// 3 levels of expanded yml syntax
+		// 2 spaces for indentation
+		$yaml = Yaml::dump( $docker_file, 3, 2 );
 		$output->writeln( 'Writing docker file' );
 		file_put_contents( 'docker-compose.yml', $yaml );
 
