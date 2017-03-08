@@ -133,7 +133,7 @@ class GeneratorCommand extends Command
 		$output->writeln( $res );
 
 		// TODO: WP image is generating wordpress files on the root. Must be stopped!
-		$res = shell_exec( 'RET=`docker-compose up`;echo $RET' );
+		$res = shell_exec( 'RET=`docker-compose up -d`;echo $RET' );
 		$output->writeln( $res );
 	}
 }
