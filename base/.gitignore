@@ -1,0 +1,170 @@
+# Themes
+#
+# Include yours by forcing the pattern: `!/wp-content/themes/my-theme`
+/wp-content/themes/*
+
+# Plugins
+#
+# Include yours by forcing the pattern: `!/wp-content/plugins/my-plugin`
+/wp-content/mu-plugins/*
+!/wp-content/mu-plugins/autoload.php
+!/wp-content/mu-plugins/disable-updates.php
+!/wp-content/mu-plugins/fix-annoyances.php
+!/wp-content/mu-plugins/https.php
+!/wp-content/mu-plugins/muddle.php
+!/wp-content/mu-plugins/km-access
+/wp-content/plugins/*
+!/wp-content/plugins/km-api-endpoint-options
+!/wp-content/plugins/km-api-endpoint-search
+!/wp-content/plugins/km-api-child-terms-count
+!/wp-content/plugins/km-documents
+!/wp-content/plugins/km-permissions
+!/wp-content/plugins/km-tinymce
+!/wp-content/plugins/km-versions
+
+# logs
+/logs
+*.log
+
+# dependencies
+vendor/
+node_modules/
+
+# build directories
+/.deploy_*/
+
+# jetbrains
+.idea/
+.idea_modules/
+*.ipr
+*.iws
+*.iml
+atlassian-ide-plugin.xml
+com_crashlytics_export_strings.xml
+
+# vim
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+# sublime text
+*.sublime-workspace
+
+# system files
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+*.bak
+*.swp
+*.orig
+Thumbs.db
+
+# vcs
+.svn
+.cvs
+
+# wordpress specific
+wp-content/uploads/
+wp-content/blogs.dir/
+wp-content/upgrade/*
+wp-content/backup-db/*
+wp-content/advanced-cache.php
+wp-content/wp-cache-config.php
+wp-content/cache/*
+wp-content/cache/supercache/*
+
+# wpengine specific
+.smushit-status
+.gitattributes
+_wpeprivate
+wp-content/object-cache.php
+wp-content/mu-plugins/mu-plugin.php
+wp-content/mu-plugins/slt-force-strong-passwords.php
+wp-content/mu-plugins/limit-login-attempts
+wp-content/mu-plugins/wpengine-common
+wp-content/mysql.sql
+
+# wp core (as of 3.4.1)
+#
+# Except index.php because WordPress is installed via composer in a sub-folder
+/db-config.php
+/license.txt
+/readme.html
+/wp-activate.php
+/wp-app.php
+/wp-atom.php
+/wp-blog-header.php
+/wp-comments-post.php
+/wp-commentsrss2.php
+/wp-config-sample.php
+/wp-cron.php
+/wp-feed.php
+/wp-links-opml.php
+/wp-load.php
+/wp-login.php
+/wp-mail.php
+/wp-rdf.php
+/wp-rss.php
+/wp-rss2.php
+/wp-pass.php
+/wp-register.php
+/wp-settings.php
+/wp-signup.php
+/wp-trackback.php
+/xmlrpc.php
+/wp-admin
+/wp-includes
+/wp-content/index.php
+/wp-content/languages/themes/twentytwelve*
+/wp-content/languages/themes/twentythirteen*
+/wp-content/languages/themes/twentyfourteen*
+/wp-content/languages/themes/twentyfifteen*
+/wp-content/themes/twentyten
+/wp-content/themes/twentyeleven
+/wp-content/themes/twentytwelve
+/wp-content/themes/twentythirteen
+/wp-content/themes/twentyfourteen
+/wp-content/themes/twentyfifteen
+/wp-content/themes/index.php
+/wp-content/plugins/index.php
+
+# large/disallowed file types
+# a CDN should be used for these
+*.hqx
+*.bin
+*.exe
+*.dll
+*.deb
+*.dmg
+*.iso
+*.img
+*.msi
+*.msp
+*.msm
+*.mid
+*.midi
+*.kar
+*.mp3
+*.ogg
+*.m4a
+*.ra
+*.3gpp
+*.3gp
+*.mp4
+*.mpeg
+*.mpg
+*.mov
+*.webm
+*.flv
+*.m4v
+*.mng
+*.asx
+*.asf
+*.wmv
+*.avi

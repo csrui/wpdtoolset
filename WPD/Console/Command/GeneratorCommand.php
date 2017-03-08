@@ -5,6 +5,7 @@ namespace WPD\Console\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Symfony\Component\Yaml\Yaml;
@@ -15,7 +16,19 @@ class GeneratorCommand extends Command
 	{
 		$this
 			->setName('app:generator')
-			->setDescription('Generate Docker Configuration.');
+			->setDescription('Generate Docker Configuration.')
+			->addOption(
+				'config-only',
+				'co',
+				InputOption::VALUE_NONE,
+				'If you only want the configuration files. Does not run `composer install` or `docker-composer`.'
+			)
+			->addOption(
+				'with-wp',
+				null,
+				InputOption::VALUE_NONE,
+				'Include if you want to manage WordPress with composer.'
+			);
 			// ->setHelp('This command interfaces with wp-cli')
 	}
 
@@ -24,7 +37,7 @@ class GeneratorCommand extends Command
 		$root_dir = dirname( __FILE__, 4 );
 
 		// Ask for a DB Password.
-		$output->writeln("<info>Define a DB password:</info> <comment>(Leave empty to use default `bananarama`)</comment>");
+		$output->writeln("<comment>Define a DB password:</comment> (Leave empty to use default `bananarama`)");
 		$db_password = readline();
 
 		if ( empty ( $db_password ) ) {
@@ -33,6 +46,11 @@ class GeneratorCommand extends Command
 		} else {
 			$output->writeln("<info>Using {$db_password} as the database password</info>");
 		}
+
+		// Build configuration.
+		$output->writeln( '<info>===========================</info>' );
+		$output->writeln( '<info> Building configuration... </info>' );
+		$output->writeln( '<info>===========================</info>' );
 
 		$docker_file = [
 			'wpdb' => [
@@ -82,16 +100,27 @@ class GeneratorCommand extends Command
 
 		// Write docker-compose file.
 		$yaml = Yaml::dump( $docker_file );
-		$output->writeln( '<info>Writing docker file</info>' );
+		$output->writeln( 'Writing docker file' );
 		file_put_contents( 'docker-compose.yml', $yaml );
 
 		// Copy composer.json from base.
-		$output->writeln('<info>Writting .gitignore</info>');
-		copy( $root_dir . '/base/composer.json', './composer.json' );
+		$output->writeln( 'Writting composer.json' );
+		if ( $input->getOption('with-wp') ) {
+			copy( $root_dir . '/base/composer-wordpress.json', './composer.json' );
+		} else {
+			copy( $root_dir . '/base/composer-default.json', './composer.json' );
+		}
 
 		// Copy .gitignore from base.
-		$output->writeln( '<info>Writting composer.json</info>' );
-		copy( $root_dir . '/base/composer.json', './composer.json' );
+		$output->writeln( 'Writting .gitignore' );
+		copy( $root_dir . '/base/.gitignore', './.gitignore' );
+
+		$output->writeln( '<info>Configuration Done!</info>' );
+
+		// Leave if the user only wants the config files.
+		if ( $input->getOption('config-only') ) {
+			return;
+		}
 
 		// Setup environment.
 		$output->writeln( '<info>=====================</info>' );
