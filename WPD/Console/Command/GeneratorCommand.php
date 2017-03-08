@@ -21,15 +21,17 @@ class GeneratorCommand extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		$root_dir = dirname( __FILE__, 4 );
+
 		// Ask for a DB Password.
-		$output->write("<info>Define a DB password:</info> <comment>(Leave empty to use default `bananarama`)</comment>\n");
+		$output->writeln("<info>Define a DB password:</info> <comment>(Leave empty to use default `bananarama`)</comment>");
 		$db_password = readline();
 
 		if ( empty ( $db_password ) ) {
-			$output->write("<info>Using default password `bananarama` for database<info>\n");
+			$output->writeln("<info>Using default password `bananarama` for database<info>");
 			$db_password = 'bananarama';
 		} else {
-			$output->write("<info>Using {$db_password} as the database password</info>\n");
+			$output->writeln("<info>Using {$db_password} as the database password</info>");
 		}
 
 		$docker_file = [
@@ -78,26 +80,31 @@ class GeneratorCommand extends Command
 			],
 		];
 
-		$yaml = Yaml::dump($docker_file);
-		$output->writeln('<info>Writing docker file</info>');
-		file_put_contents('docker-compose.yml', $yaml);
+		// Write docker-compose file.
+		$yaml = Yaml::dump( $docker_file );
+		$output->writeln( '<info>Writing docker file</info>' );
+		file_put_contents( 'docker-compose.yml', $yaml );
 
-		$gitignore = basename(__DIR__) . PHP_EOL;
+		// Copy composer.json from base.
 		$output->writeln('<info>Writting .gitignore</info>');
-		file_put_contents('.gitignore', $gitignore);
+		copy( $root_dir . '/base/composer.json', './composer.json' );
 
-		$output->writeln('<info>Writting composer.json</info>');
-		copy( 'toolset/base/composer.json', './composer.json' );
+		// Copy .gitignore from base.
+		$output->writeln( '<info>Writting composer.json</info>' );
+		copy( $root_dir . '/base/composer.json', './composer.json' );
 
-		$output->writeln('<info>Starting engines...</info>');
+		// Setup environment.
+		$output->writeln( '<info>=====================</info>' );
+		$output->writeln( '<info> Starting engines... </info>' );
+		$output->writeln( '<info>=====================</info>' );
 
-		// To load wordpress as dependency
-		copy( 'toolset/base/index.php', './index.php' );
-		$res = shell_exec('RET=`composer update`;echo $RET');
-		$output->writeln($res);
+		// To load wordpress as dependency.
+		copy( $root_dir . '/base/index.php', './index.php' );
+		$res = shell_exec( 'RET=`composer install`;echo $RET' );
+		$output->writeln( $res );
 
-		//TODO WP image is generating wordpress files on the root. Must be stopped
-		$res = shell_exec('RET=`docker-compose up`;echo $RET');
-		$output->writeln($res);
+		// TODO: WP image is generating wordpress files on the root. Must be stopped!
+		$res = shell_exec( 'RET=`docker-compose up`;echo $RET' );
+		$output->writeln( $res );
 	}
 }
