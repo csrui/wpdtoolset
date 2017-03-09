@@ -5,6 +5,7 @@ namespace WPD\Console\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Symfony\Component\Yaml\Yaml;
@@ -15,22 +16,41 @@ class GeneratorCommand extends Command
 	{
 		$this
 			->setName('app:generator')
-			->setDescription('Generate Docker Configuration.');
+			->setDescription('Generate Docker Configuration.')
+			->addOption(
+				'config-only',
+				'co',
+				InputOption::VALUE_NONE,
+				'If you only want the configuration files. Does not run `composer install` or `docker-composer`.'
+			)
+			->addOption(
+				'with-wp',
+				null,
+				InputOption::VALUE_NONE,
+				'Include if you want to manage WordPress with composer.'
+			);
 			// ->setHelp('This command interfaces with wp-cli')
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		$root_dir = dirname( __FILE__, 4 );
+
 		// Ask for a DB Password.
-		$output->write("<info>Define a DB password:</info> <comment>(Leave empty to generate one automaticaly)</comment>\n");
+		$output->write("<comment>Define a DB password:</comment> (Leave empty to generate one automaticaly)");
 		$db_password = readline();
 
 		if ( empty ( $db_password ) ) {
 			$db_password = uniqid();
-			$output->write("<info>Using generated password `{$db_password}` for database<info>\n");
+			$output->write("<info>Using generated password `{$db_password}` for database<info>");
 		} else {
-			$output->write("<info>Using {$db_password} as the database password</info>\n");
+			$output->writeln("<info>Using {$db_password} as the database password</info>");
 		}
+
+		// Build configuration.
+		$output->writeln( '<info>===========================</info>' );
+		$output->writeln( '<info> Building configuration... </info>' );
+		$output->writeln( '<info>===========================</info>' );
 
 		$docker_file = [
 			'wpdb' => [
@@ -78,26 +98,44 @@ class GeneratorCommand extends Command
 			],
 		];
 
-		$yaml = Yaml::dump($docker_file);
-		$output->writeln('<info>Writing docker file</info>');
-		file_put_contents('docker-compose.yml', $yaml);
+		// Write docker-compose file.
+		// 3 levels of expanded yml syntax
+		// 2 spaces for indentation
+		$yaml = Yaml::dump( $docker_file, 3, 2 );
+		$output->writeln( 'Writing docker file' );
+		file_put_contents( 'docker-compose.yml', $yaml );
 
-		$gitignore = basename(__DIR__) . PHP_EOL;
-		$output->writeln('<info>Writting .gitignore</info>');
-		file_put_contents('.gitignore', $gitignore);
+		// Copy composer.json from base.
+		$output->writeln( 'Writting composer.json' );
+		if ( $input->getOption('with-wp') ) {
+			copy( $root_dir . '/base/composer-wordpress.json', './composer.json' );
+		} else {
+			copy( $root_dir . '/base/composer-default.json', './composer.json' );
+		}
 
-		$output->writeln('<info>Writting composer.json</info>');
-		copy( 'toolset/base/composer.json', './composer.json' );
+		// Copy .gitignore from base.
+		$output->writeln( 'Writting .gitignore' );
+		copy( $root_dir . '/base/.gitignore', './.gitignore' );
 
-		$output->writeln('<info>Starting engines...</info>');
+		$output->writeln( '<info>Configuration Done!</info>' );
 
-		// To load wordpress as dependency
-		copy( 'toolset/base/index.php', './index.php' );
-		$res = shell_exec('RET=`composer update`;echo $RET');
-		$output->writeln($res);
+		// Leave if the user only wants the config files.
+		if ( $input->getOption('config-only') ) {
+			return;
+		}
 
-		//TODO WP image is generating wordpress files on the root. Must be stopped
-		$res = shell_exec('RET=`docker-compose up`;echo $RET');
-		$output->writeln($res);
+		// Setup environment.
+		$output->writeln( '<info>=====================</info>' );
+		$output->writeln( '<info> Starting engines... </info>' );
+		$output->writeln( '<info>=====================</info>' );
+
+		// To load wordpress as dependency.
+		copy( $root_dir . '/base/index.php', './index.php' );
+		$res = shell_exec( 'RET=`composer install`;echo $RET' );
+		$output->writeln( $res );
+
+		// TODO: WP image is generating wordpress files on the root. Must be stopped!
+		$res = shell_exec( 'RET=`docker-compose up -d`;echo $RET' );
+		$output->writeln( $res );
 	}
 }
