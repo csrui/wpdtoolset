@@ -7,21 +7,17 @@
     }
   },
   "require": {
-    "johnpbloch/wordpress": "^4.7"
-  },
-  "require-dev": {
     "symfony/console": "^3.2",
     "symfony/yaml": "^3.2"
   },
+  "require-dev": {},
   "authors": [
     {
       "name": "Rui Sardinha",
       "email": "mail@ruisardinha.com"
     }
   ],
-  "extra": {
-    "wordpress-install-dir": "wp"
-  },
+  "extra": {},
   "config": {
     "sort-packages": true
   }
