@@ -10,6 +10,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use Symfony\Component\Yaml\Yaml;
 
+use WPD\Dependencies\Composer;
+
 class GeneratorCommand extends Command
 {
 	protected function configure()
@@ -107,11 +109,14 @@ class GeneratorCommand extends Command
 
 		// Copy composer.json from base.
 		$output->writeln( 'Writting composer.json' );
+		$composer = new Composer();
+
 		if ( $input->getOption('with-wp') ) {
-			copy( $root_dir . '/base/composer-wordpress.json', './composer.json' );
-		} else {
-			copy( $root_dir . '/base/composer-default.json', './composer.json' );
+			//TODO Include version in parameters
+			$composer->add_require( [ 'johnpbloch/wordpress' => '^4.7' ] );
 		}
+		//FIXME Set correct paths cause this stuff aint workin
+		file_put_contents( 'generated-composer.json', json_encode( $composer->get() ) );
 
 		// Copy .gitignore from base.
 		$output->writeln( 'Writting .gitignore' );
