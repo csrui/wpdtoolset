@@ -34,15 +34,16 @@ class GeneratorCommand extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		//TODO This is supported in PHP 7 only, I'm getting warnings
 		$root_dir = dirname( __FILE__, 4 );
 
 		// Ask for a DB Password.
-		$output->write("<comment>Define a DB password:</comment> (Leave empty to generate one automaticaly)");
+		$output->writeln("<comment>Define a DB password:</comment> (Leave empty to generate one automaticaly)");
 		$db_password = readline();
 
 		if ( empty ( $db_password ) ) {
 			$db_password = uniqid();
-			$output->write("<info>Using generated password `{$db_password}` for database<info>");
+			$output->writeln("<info>Using generated password `{$db_password}` for database<info>");
 		} else {
 			$output->writeln("<info>Using {$db_password} as the database password</info>");
 		}
