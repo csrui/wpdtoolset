@@ -22,12 +22,12 @@ class GeneratorCommand extends Command
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		// Ask for a DB Password.
-		$output->write("<info>Define a DB password:</info> <comment>(Leave empty to use default `bananarama`)</comment>\n");
+		$output->write("<info>Define a DB password:</info> <comment>(Leave empty to generate one automaticaly)</comment>\n");
 		$db_password = readline();
 
 		if ( empty ( $db_password ) ) {
-			$output->write("<info>Using default password `bananarama` for database<info>\n");
-			$db_password = 'bananarama';
+			$db_password = uniqid();
+			$output->write("<info>Using generated password `{$db_password}` for database<info>\n");
 		} else {
 			$output->write("<info>Using {$db_password} as the database password</info>\n");
 		}
