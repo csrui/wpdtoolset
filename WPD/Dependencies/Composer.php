@@ -30,14 +30,15 @@ class Composer {
 				]
 			],
 			'extra'=> [
-				'installer-paths'=> [
+				"wordpress-install-dir" => "wp",
+				'installer-paths' => [
 					'wp/wp-content/mu-plugins/{$name}/' => ['type=>wordpress-muplugin'],
 					'wp/wp-content/plugins/{$name}/' => ['type=>wordpress-plugin'],
 					'wp/wp-content/themes/{$name}/' => ['type=>wordpress-theme'],
 				],
 			],
-			'config'=> [
-				'sort-packages'=> true,
+			'config' => [
+				'sort-packages' => true,
 			],
 		];
 	}
