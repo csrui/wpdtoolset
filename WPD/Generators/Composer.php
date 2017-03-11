@@ -1,17 +1,23 @@
 <?php
 
-namespace WPD\Dependencies;
+namespace WPD\Generators;
 
 /**
  * This class allows customizations to a composer.json file
  *
  * @todo Add more customizations
  */
-class Composer {
+class Composer extends Generator {
 
 	private $requires = [];
 
 	private $requires_dev = [];
+
+
+	public function generate() {
+
+		$this->set_content( json_encode( $this->get() ) );
+	}
 
 	/**
 	 * Return the full composer.json structure
