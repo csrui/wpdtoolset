@@ -21,7 +21,7 @@ class WPCLICommand extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$base = 'docker-compose run wpcli %s';
+		$base = 'docker-compose run --rm wpcli %s';
 
 		$args = $input->getArgument('run');
 
