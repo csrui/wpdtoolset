@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Symfony\Component\Yaml\Yaml;
+use WPD\Generators\Docker;
 
 use WPD\Dependencies\Composer;
 
@@ -36,15 +36,16 @@ class GeneratorCommand extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		//TODO This is supported in PHP 7 only, I'm getting warnings
 		$root_dir = dirname( __FILE__, 4 );
 
 		// Ask for a DB Password.
-		$output->writeln("<comment>Define a DB password:</comment> (Leave empty to use default `bananarama`)");
+		$output->writeln("<comment>Define a DB password:</comment> (Leave empty to generate one automaticaly)");
 		$db_password = readline();
 
 		if ( empty ( $db_password ) ) {
-			$output->writeln("<info>Using default password `bananarama` for database<info>");
-			$db_password = 'bananarama';
+			$db_password = uniqid();
+			$output->writeln("<info>Using generated password `{$db_password}` for database<info>");
 		} else {
 			$output->writeln("<info>Using {$db_password} as the database password</info>");
 		}
@@ -54,58 +55,12 @@ class GeneratorCommand extends Command
 		$output->writeln( '<info> Building configuration... </info>' );
 		$output->writeln( '<info>===========================</info>' );
 
-		$docker_file = [
-			'wpdb' => [
-				'image' => 'mariadb',
-				'ports' => [
-					'8081:3306',
-				],
-				'environment' => [
-					'MYSQL_ROOT_PASSWORD' => $db_password,
-				],
-			],
-			'wp' => [
-				'image' => 'wordpress',
-				'volumes' => [
-					'./:/var/www/html',
-				],
-				'ports' => [
-					'8080:80',
-				],
-				'links' => [
-					'wpdb:mysql',
-				],
-				'environment' => [
-					'WORDPRESS_DB_PASSWORD' => $db_password,
-				],
-			],
-			'wpcli' => [
-				'image' => 'tatemz/wp-cli',
-				'volumes_from' => [
-					'wp',
-				],
-				'links' => [
-					'wpdb:mysql',
-				],
-				'entrypoint' => 'wp',
-				'command' => '--info',
-			],
-			'composer' => [
-				'image' => 'composer/composer',
-				'volumes_from' => [
-					'wp',
-				],
-				'working_dir' => '/var/www/html',
-				'command' => '--info',
-			],
-		];
-
-		// Write docker-compose file.
-		// 3 levels of expanded yml syntax
-		// 2 spaces for indentation
-		$yaml = Yaml::dump( $docker_file, 3, 2 );
 		$output->writeln( 'Writing docker file' );
-		file_put_contents( 'docker-compose.yml', $yaml );
+		$docker_file = new Docker();
+		$docker_file->generate();
+		$docker_file->save( 'docker-compose.yml', [
+			'db_password' => $db_password,
+		] );
 
 		// Copy composer.json from base.
 		$output->writeln( 'Writting composer.json' );
