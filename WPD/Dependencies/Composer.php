@@ -30,7 +30,7 @@ class Composer {
 				]
 			],
 			'extra'=> [
-				"wordpress-install-dir" => "wp",
+				'wordpress-install-dir' => 'wp',
 				'installer-paths' => [
 					'wp/wp-content/mu-plugins/{$name}/' => ['type=>wordpress-muplugin'],
 					'wp/wp-content/plugins/{$name}/' => ['type=>wordpress-plugin'],
