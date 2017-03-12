@@ -1,18 +1,12 @@
-#!/usr/bin/env php
 <?php
 
 require __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-use WPD\Console\Command\HelloWorldCommand;
 use WPD\Console\Command\WPCLICommand;
 use WPD\Console\Command\GeneratorCommand;
 
-$HelloWorldCommand = new HelloWorldCommand();
 $app = new Application();
-
-$app->add($HelloWorldCommand);
-// $app->setDefaultCommand($HelloWorldCommand->getName());
 
 $app->add(new WPCLICommand());
 $app->add(new GeneratorCommand());
