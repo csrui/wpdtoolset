@@ -27,18 +27,15 @@ class Docker extends Generator {
 				],
 			],
 			'wp' => [
-				'image' => 'wordpress',
+				'image'   => 'wodby/php',
 				'volumes' => [
 					'./:/var/www/html',
 				],
-				'ports' => [
-					'8080:80',
-				],
-				'links' => [
-					'wpdb:mysql',
-				],
 				'environment' => [
-					'WORDPRESS_DB_PASSWORD' => '{db_password}',
+					'PHP_SENDMAIL_PATH'  => '/usr/sbin/sendmail -t -i -S mailhog:1025',
+					'PHP_XDEBUG_ENABLED' => 0,
+					'PHP_HOST_NAME'      => 'localhost:8000',
+					'PHP_SITE_NAME'      => 'dev',
 				],
 			],
 			'wpcli' => [
@@ -50,7 +47,7 @@ class Docker extends Generator {
 					'wpdb:mysql',
 				],
 				'entrypoint' => 'wp',
-				'command' => '--info',
+				'command'    => '--info',
 			],
 			'composer' => [
 				'image' => 'composer/composer',
@@ -58,8 +55,14 @@ class Docker extends Generator {
 					'wp',
 				],
 				'working_dir' => '/var/www/html',
-				'command' => '--info',
+				'command'     => '--info',
 			],
+			'mailhog' => [
+				'image' => 'mailhog/mailhog',
+				'ports' => [
+					'8002:8025',
+				]
+			]
 		];
 	}
 }
