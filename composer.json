@@ -3,9 +3,10 @@
   "type": "library",
   "autoload": {
     "psr-4": {
-      "WPD\\": "WPD/"
+      "WPD\\": "src/WPD/"
     }
   },
+  "bin": [ "index.php" ],
   "require": {
     "symfony/console": "^3.2",
     "symfony/yaml": "^3.2"
