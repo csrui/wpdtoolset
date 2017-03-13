@@ -20,7 +20,22 @@
       "email": "mail@ruisardinha.com"
     }
   ],
-  "extra": {},
+  "extra": {
+    "phar-builder": {
+      "compression": "GZip",
+      "name": "wpdtool.phar",
+      "output-dir": "bin/",
+      "entry-point": "index.php",
+      "include-dev": false,
+      "events": {
+        "build.before" : "git describe --tags > bin/version.txt",
+        "build.after": [
+          "rm bin/version.txt",
+          "chmod +x bin/wpdtool.phar"
+        ]
+      }
+    }
+  },
   "config": {
     "sort-packages": true
   }
