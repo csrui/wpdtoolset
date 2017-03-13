@@ -8,10 +8,12 @@
   },
   "bin": [ "index.php" ],
   "require": {
-    "symfony/console": "^3.2",
+    "symfony/console": "2.7",
     "symfony/yaml": "^3.2"
   },
-  "require-dev": {},
+  "require-dev": {
+    "macfja/phar-builder": "^0.2.5"
+  },
   "authors": [
     {
       "name": "Rui Sardinha",
