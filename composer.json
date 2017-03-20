@@ -8,17 +8,34 @@
   },
   "bin": [ "index.php" ],
   "require": {
-    "symfony/console": "^3.2",
+    "symfony/console": "2.7",
     "symfony/yaml": "^3.2"
   },
-  "require-dev": {},
+  "require-dev": {
+    "macfja/phar-builder": "^0.2.5"
+  },
   "authors": [
     {
       "name": "Rui Sardinha",
       "email": "mail@ruisardinha.com"
     }
   ],
-  "extra": {},
+  "extra": {
+    "phar-builder": {
+      "compression": "GZip",
+      "name": "wpdtool.phar",
+      "output-dir": "bin/",
+      "entry-point": "index.php",
+      "include-dev": false,
+      "events": {
+        "build.before" : "git describe --tags > bin/version.txt",
+        "build.after": [
+          "rm bin/version.txt",
+          "chmod +x bin/wpdtool.phar"
+        ]
+      }
+    }
+  },
   "config": {
     "sort-packages": true
   }
