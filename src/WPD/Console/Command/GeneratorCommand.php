@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use WPD\Generators\Docker;
+use WPD\Generators\Composer;
 
 class GeneratorCommand extends Command
 {
@@ -62,11 +63,13 @@ class GeneratorCommand extends Command
 
 		// Copy composer.json from base.
 		$output->writeln( 'Writting composer.json' );
+		$composer_file = new Composer();
 		if ( $input->getOption('with-wp') ) {
-			copy( $root_dir . '/base/composer-wordpress.json', './composer.json' );
-		} else {
-			copy( $root_dir . '/base/composer-default.json', './composer.json' );
+			//TODO Include version in parameters
+			$composer_file->add_require( [ 'johnpbloch/wordpress' => '^4.7' ] );
 		}
+		$composer_file->generate();
+		$composer_file->save( 'generated-composer.json', [] );
 
 		// Copy .gitignore from base.
 		$output->writeln( 'Writting .gitignore' );
