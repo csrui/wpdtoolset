@@ -1,5 +1,5 @@
 {
-  "name": "26b/wpd-toolset",
+  "name": "csrui/wpd-toolset",
   "type": "library",
   "autoload": {
     "psr-4": {
