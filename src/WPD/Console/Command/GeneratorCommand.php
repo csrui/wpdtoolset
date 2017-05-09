@@ -35,7 +35,6 @@ class GeneratorCommand extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		//TODO This is supported in PHP 7 only, I'm getting warnings
 		$root_dir = dirname( __FILE__, 4 );
 
 		// Ask for a DB Password.
@@ -49,6 +48,14 @@ class GeneratorCommand extends Command
 			$output->writeln("<info>Using {$db_password} as the database password</info>");
 		}
 
+		// Ask for a DB Name.
+		$output->writeln("<comment>Define a DB name:</comment> (Leave empty to use default `wordpress_local`)");
+		$db_name = readline();
+
+		if ( empty ( $db_name ) ) {
+			$db_name = 'wordpress_local';
+		}
+
 		// Build configuration.
 		$output->writeln( '<info>===========================</info>' );
 		$output->writeln( '<info> Building configuration... </info>' );
@@ -59,6 +66,7 @@ class GeneratorCommand extends Command
 		$docker_file->generate();
 		$docker_file->save( 'docker-compose.yml', [
 			'db_password' => $db_password,
+			'db_name'     => $db_name,
 		] );
 
 		// Copy composer.json from base.
@@ -69,7 +77,7 @@ class GeneratorCommand extends Command
 			$composer_file->add_require( [ 'johnpbloch/wordpress' => '^4.7' ] );
 		}
 		$composer_file->generate();
-		$composer_file->save( 'generated-composer.json', [] );
+		$composer_file->save( 'composer.json', [] );
 
 		// Copy .gitignore from base.
 		$output->writeln( 'Writting .gitignore' );
@@ -88,12 +96,12 @@ class GeneratorCommand extends Command
 		$output->writeln( '<info>=====================</info>' );
 
 		// To load wordpress as dependency.
-		copy( $root_dir . '/base/index.php', './index.php' );
-		$res = shell_exec( 'RET=`composer install`;echo $RET' );
-		$output->writeln( $res );
+		// copy( $root_dir . '/base/index.php', './index.php' );
+		// $res = shell_exec( 'RET=`composer install`;echo $RET' );
+		// $output->writeln( $res );
 
 		// TODO: WP image is generating wordpress files on the root. Must be stopped!
-		$res = shell_exec( 'RET=`docker-compose up -d`;echo $RET' );
+		$res = shell_exec( 'docker-compose up -d' );
 		$output->writeln( $res );
 	}
 }

@@ -2,6 +2,8 @@
 
 namespace WPD\Generators;
 
+use WPD\Generators\Generator;
+
 /**
  * This class allows customizations to a composer.json file
  *
@@ -19,7 +21,7 @@ class Composer extends Generator {
 	 * @return void
 	 */
 	public function generate() {
-		$this->set_content( json_encode( $this->get() ) );
+		$this->set_content( json_encode( $this->get(), 0, 5 ) );
 	}
 
 	/**

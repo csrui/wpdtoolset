@@ -7,7 +7,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class Docker extends Generator {
 
-	public function generate( ) {
+	public function generate() {
 
 		// Write docker-compose file.
 		// 3 levels of expanded yml syntax
@@ -24,6 +24,7 @@ class Docker extends Generator {
 				],
 				'environment' => [
 					'MYSQL_ROOT_PASSWORD' => '{db_password}',
+					'MYSQL_DATABASE'      => '{db_name}',
 				],
 			],
 			'wp' => [
